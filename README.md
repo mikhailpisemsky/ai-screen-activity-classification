@@ -71,7 +71,7 @@ virtualenv\Scripts\activate
 **Вариант 1: Автоматическая установка (рекомендуется)**
 
 ```bash
-cd /models
+cd models
 python install_tesseract.py
 ```
 
@@ -109,7 +109,7 @@ python install_tesseract.py --verify-only
 
 ### 3. Установка зависимостей Python
 ```bash
-cd /models
+cd models
 pip install -r requirements.txt
 ```
 
