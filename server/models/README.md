@@ -2,9 +2,16 @@
 
 ## Описание модели:
 
-Используется *Tesseract OCR* для сегментации изображений (скриншотов) и извлечения текста, *LLM* + *ключевые слова* для классификации полученного текста по видам экранной активности.
-В качестве LLM модели для классификации используется [rubert-tiny2](https://huggingface.co/cointegrated/rubert-tiny2), предобученная для классификации тектса по видам экранной активности: 
-рабочая активность, нерабочая активность, вредоносные сайты, нейтральная / системная активность. В качестве данных для модели rubert-tiny2 был выбран датасет:
+Используется *Tesseract OCR* для распознования текста с изображений (скриншотов),
+
+*LLM* + *ключевые слова* для классификации полученного текста по 4 видам экранной активности:
+
+* рабочая активность;
+* нерабочая активность;
+* вредоносные сайты;
+* нейтральная / системная активность.
+  
+В качестве LLM модели используется предобученная модель [rubert-tiny2](https://huggingface.co/cointegrated/rubert-tiny2), в качестве данных для модели rubert-tiny2 был выбран датасет
 [website-screenshots](https://www.kaggle.com/datasets/pooriamst/website-screenshots)
 
 ![Логика модели](../../models.png)
@@ -23,15 +30,14 @@ ai-screen-activity-classification/
 │   │   │   │   ├── label_map.json
 │   │   │   │   └── test.jsonl
 │   │   │   ├── trained_model/
-│   │   │   │   ├── config.json     
+│   │   │   │   ├── config.json
+│   │   │   │   ├── mettrics.json     
 │   │   │   │   ├── pytorch_model.bin
-│   │   │   │   ├── vocab.txt
-│   │   │   │   └── tokenizer_config.json
+│   │   │   │   ├── special_tokens_map.json
+│   │   │   │   ├── tokenizer.json
+│   │   │   │   ├── tokenizer_config.json
+│   │   │   │   └── vocab.txt
 │   │   │   └── transformer_classifer.py
-│   │   ├── test_data/
-│   │   │   ├── test_image_social.png
-│   │   │   └── test_image_work.png  
-│   │   ├── test_results/
 │   │   ├── __init__.py 
 │   │   ├── activity_classifier.py
 │   │   ├── create_test_images.py
@@ -40,8 +46,7 @@ ai-screen-activity-classification/
 │   │   ├── keyword_lists.py
 │   │   ├── ocr_processor.py
 │   │   ├── README.md
-│   │   ├── requirements.txt
-│   │   └── test_models.py
+│   │   └── requirements.txt
 │   ├── vendor/
 │   │   ├── tesseract
 │   │   │   ├── linux/
@@ -51,7 +56,15 @@ ai-screen-activity-classification/
 
 ## Установка и подготовка модели к использованию
 
-### 1. Создание виртуального окружения
+### 1. Клонирование репозитория *mikhailpisemsky/ai-screen-activity-classification*
+
+```bash
+git clone https://github.com/mikhailpisemsky/ai-screen-activity-classification.git
+cd ai-screen-activity-classification
+git lfs fetch --all
+```
+
+### 2. Создание виртуального окружения
 
 1.) Установка виртуального окружения
 
@@ -66,7 +79,7 @@ python -m venv virtualenv
 virtualenv\Scripts\activate
 ```
 
-### 2. Установка Tesseract OCR в vendor каталог
+### 3. Установка Tesseract OCR в vendor каталог
 
 **Вариант 1: Автоматическая установка (рекомендуется)**
 
@@ -107,19 +120,13 @@ cd server/models
 python install_tesseract.py --verify-only
 ```
 
-### 3. Установка зависимостей Python
+### 4. Установка зависимостей Python
 ```bash
 cd models
 pip install -r requirements.txt
 ```
 
-### 4. Тестирование модели
-```bash
-cd server/models
-python test_models.py
-```
-
-### 5. Использование модели в коде
+### 5. Пример использования модели в коде
 ```python
 import sys
 from pathlib import Path
