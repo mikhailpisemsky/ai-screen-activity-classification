@@ -1,0 +1,16 @@
+[
+  {
+    "id_to_category": {
+      "0": "harmful",
+      "1": "neutral",
+      "2": "non_work",
+      "3": "work"
+    },
+    "category_to_id": {
+      "harmful": 0,
+      "neutral": 1,
+      "non_work": 2,
+      "work": 3
+    }
+  }
+]
