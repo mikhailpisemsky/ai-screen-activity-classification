@@ -7,102 +7,89 @@
 рабочая активность, нерабочая активность, вредоносные сайты, нейтральная / системная активность. В качестве данных для модели rubert-tiny2 был выбран датасет:
 [website-screenshots](https://www.kaggle.com/datasets/pooriamst/website-screenshots)
 
-![Логика модели](models.png)
+![Логика модели](../../models.png)
 
-## Архитектура системы:
+## Структура репозитория:
 ```
-ai-screen-monitor/
-├── client/                # Клиентская часть
-│   ├── src/               # Исходный код
-│   │   ├── linux/         # Linux-специфичный код
-│   │   ├── windows/       # Windows-специфичный код
-│   │   └── common/        # Общий для всех ОС код (логика, сеть)
-│   ├── include/           # Заголовочные файлы
-│   ├── tests/             # Юнит-тесты
-│   └── CMakeLists.txt     # Файл для сборки с помощью CMake
-├── server/                # Серверная часть (Python)
-│   ├── app/               # Код FastAPI приложения
-│   ├── models/            # ML-модели и код для классификации
-│   │   ├── llm/                    # LLM
+ai-screen-activity-classification/
+├── server/
+│   ├── models/
+│   │   ├── llm/
 │   │   │   ├── __init__.py
-│   │   │   ├── dataset/            # Датасеты для обучения
-│   │   │   │   ├── raw_dataset.json # Исходный датасет
-│   │   │   │   ├── train.json      # Обучающая выборка
-│   │   │   │   ├── val.json        # Данные для валидации
+│   │   │   ├── dataset/
+│   │   │   │   ├── raw_dataset.json
+│   │   │   │   ├── train.json
+│   │   │   │   ├── val.json
 │   │   │   │   ├── label_map.json
-│   │   │   │   └── test.jsonl      # Тестовая выборка
-│   │   │   ├── trained_model/      # Сохраненная модель
+│   │   │   │   └── test.jsonl
+│   │   │   ├── trained_model/
 │   │   │   │   ├── config.json     
-│   │   │   │   ├── pytorch_model.pth
+│   │   │   │   ├── pytorch_model.bin
 │   │   │   │   ├── vocab.txt
-│   │   │   │   ├── metrics.json
-│   │   │   │   ├── special_tokens_map.json
-│   │   │   │   ├── tokenizer.json
 │   │   │   │   └── tokenizer_config.json
 │   │   │   └── transformer_classifer.py
 │   │   ├── test_data/
 │   │   │   ├── test_image_social.png
 │   │   │   └── test_image_work.png  
-│   │   ├── test_results/ # Результаты выполнения тестов test_models.py
+│   │   ├── test_results/
 │   │   ├── __init__.py 
-│   │   ├── activity_classifier.py # Классификация на основе ключевых слов
-│   │   ├── create_test_images.py # Создание тестовых изображений
+│   │   ├── activity_classifier.py
+│   │   ├── create_test_images.py
 │   │   ├── hybrid_classifier.py
-│   │   ├── install_tesseract.py # Установка Tesseract OCR
-│   │   ├── keyword_lists.py # Ключевые слова для классификации экранной активности
-│   │   ├── ocr_processor.py # Модель Tesseract OCR
+│   │   ├── install_tesseract.py
+│   │   ├── keyword_lists.py
+│   │   ├── ocr_processor.py
 │   │   ├── README.md
-│   │   ├── requirements.txt # Зависимости Python
-│   │   └── test_models.py # Тестовый файл
-│   ├── vendor/ # Предустановленный Tesseract OCR
+│   │   ├── requirements.txt
+│   │   └── test_models.py
+│   ├── vendor/
 │   │   ├── tesseract
 │   │   │   ├── linux/
 │   │   └   └── windows/ 
-│   └── requirements.txt   # Зависимости Python
-├── web/                   # Frontend (React/Vue)
-├── docs/                  # Документация
 └── README.md
 ```
 
-## Создание виртуального окружения
+## Установка и подготовка модели к использованию
 
-1. Установка виртуального окружения
+### 1. Создание виртуального окружения
+
+1.) Установка виртуального окружения
 
 ```bash
 cd server
 python -m venv virtualenv
 ```
 
-2. Активация виртуального окружения
+2.) Активация виртуального окружения
 
 ```bash
 virtualenv\Scripts\activate
 ```
 
-## Установка Tesseract OCR в vendor каталог
+### 2. Установка Tesseract OCR в vendor каталог
 
-### Вариант 1: Автоматическая установка (рекомендуется)
+**Вариант 1: Автоматическая установка (рекомендуется)**
 
 ```bash
-cd server/models
+cd /models
 python install_tesseract.py
 ```
 
-### Вариант 2: Ручная установка для Windows
+**Вариант 2: Ручная установка для Windows**
 
-*1.Скачайте установщик Tesseract:*
+*1.) Скачайте установщик Tesseract:*
 
 * https://github.com/UB-Mannheim/tesseract/wiki
 
 * Или: https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-5.3.1.20230401.exe
 
-*2. Установите в каталог:*
+*2.) Установите в каталог:*
 
 ```bash
 server/vendor/tesseract/windows/
 ```
 
-*3. Выберите языки:*
+*3.) Выберите языки:*
 
 * Английский
 
@@ -112,7 +99,7 @@ server/vendor/tesseract/windows/
 
 2.) Включите галочки напротив "Russian" и "English"
 
-### Вариант 3: Ручная установка для Linux
+**Вариант 3: Ручная установка для Linux**
 ```bash
 sudo apt-get update
 sudo apt-get install -y tesseract-ocr tesseract-ocr-rus tesseract-ocr-eng
@@ -120,19 +107,19 @@ cd server/models
 python install_tesseract.py --verify-only
 ```
 
-## Установка зависимостей Python
+### 3. Установка зависимостей Python
 ```bash
-cd server/models
+cd /models
 pip install -r requirements.txt
 ```
 
-## Тестирование модели
+### 4. Тестирование модели
 ```bash
 cd server/models
 python test_models.py
 ```
 
-## Использование модели в коде
+### 5. Использование модели в коде
 ```python
 import sys
 from pathlib import Path
@@ -155,7 +142,7 @@ print(f"Уверенность: {result.confidence:.2%}")
 print(f"Ключевые слова: {result.matched_keywords}")
 ```
 
-## Настройка ключевых слов (опционально, под свои требования)
+### Настройка ключевых слов (опционально, под свои требования)
 
 Ключевые слова хранятся в keyword_lists.py. Для редактирования:
 
