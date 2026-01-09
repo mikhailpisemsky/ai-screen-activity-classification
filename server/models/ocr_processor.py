@@ -35,6 +35,28 @@ class OCRProcessor:
             'sharpness_factor': 1.1,
             'binary_threshold': 160
         }
+
+    def _run_subprocess_hidden(self, cmd, **kwargs):
+
+            run_kwargs = kwargs.copy()
+
+            if 'encoding' not in run_kwargs:
+                run_kwargs['encoding'] = 'utf-8'
+            if 'errors' not in run_kwargs:
+                run_kwargs['errors'] = 'ignore'
+
+            if sys.platform == "win32":
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = subprocess.SW_HIDE
+                
+                run_kwargs['startupinfo'] = startupinfo
+                run_kwargs['creationflags'] = subprocess.CREATE_NO_WINDOW
+
+            if sys.platform in ["linux", "darwin"]:
+                run_kwargs['start_new_session'] = True
+            
+            return subprocess.run(cmd, **run_kwargs)
     
     def _find_tesseract(self, custom_path: Optional[str] = None) -> str:
 
@@ -65,7 +87,6 @@ class OCRProcessor:
                 Path("/usr/local/bin/tesseract"),
             ]
         else:
-            # Другие ОС
             possible_paths = [
                 Path("/usr/bin/tesseract"),
                 Path("/usr/local/bin/tesseract"),
@@ -78,7 +99,7 @@ class OCRProcessor:
         
         try:
             if self.os_type == 'windows':
-                result = subprocess.run(
+                result = self._run_subprocess_hidden(
                     ['where', 'tesseract'],
                     capture_output=True,
                     text=True,
@@ -87,7 +108,7 @@ class OCRProcessor:
                     errors='ignore'
                 )
             else:
-                result = subprocess.run(
+                result = self._run_subprocess_hidden(
                     ['which', 'tesseract'],
                     capture_output=True,
                     text=True,
@@ -181,7 +202,7 @@ class OCRProcessor:
             
             shell_needed = self.os_type == 'windows'
             
-            result = subprocess.run(
+            result = self._run_subprocess_hidden(
                 cmd,
                 capture_output=True,
                 text=True,
@@ -360,7 +381,7 @@ class OCRProcessor:
             
             logger.debug(f"Выполняем команду: {' '.join(cmd)}")
             
-            result = subprocess.run(
+            result = self._run_subprocess_hidden(
                 cmd,
                 capture_output=True,
                 text=True,
@@ -558,7 +579,6 @@ class OCRProcessor:
         words = [w for w in text.split() if w.strip()]
         word_count = len(words)
         
-        # Простая эвристика: больше слов = выше уверенность
         if word_count == 0:
             return 0.0
         elif word_count == 1:
@@ -622,7 +642,7 @@ class OCRProcessor:
         try:
             cmd = [self.tesseract_path, '--version']
             
-            process = subprocess.run(
+            process = self._run_subprocess_hidden(
                 cmd,
                 capture_output=True,
                 text=True,
@@ -643,7 +663,7 @@ class OCRProcessor:
                     if self.tessdata_path:
                         env = os.environ.copy()
                         env['TESSDATA_PREFIX'] = str(self.tessdata_path.parent)
-                        process_lang = subprocess.run(
+                        process_lang = self._run_subprocess_hidden(
                             cmd_lang,
                             env=env,
                             capture_output=True,
@@ -654,7 +674,7 @@ class OCRProcessor:
                             shell=self.os_type == 'windows'
                         )
                     else:
-                        process_lang = subprocess.run(
+                        process_lang = self._run_subprocess_hidden(
                             cmd_lang,
                             capture_output=True,
                             text=True,
