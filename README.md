@@ -11,8 +11,7 @@
 * вредоносные сайты;
 * нейтральная / системная активность.
   
-В качестве LLM модели используется предобученная модель [rubert-tiny2](https://huggingface.co/cointegrated/rubert-tiny2), в качестве данных для модели rubert-tiny2 был выбран датасет
-[website-screenshots](https://www.kaggle.com/datasets/pooriamst/website-screenshots)
+В качестве LLM модели используется предобученная модель [rubert-tiny2](https://huggingface.co/cointegrated/rubert-tiny2), в качестве данных для модели rubert-tiny2 был выбран датасет [website-screenshots](https://www.kaggle.com/datasets/pooriamst/website-screenshots)
 
 ![Логика модели](models.png)
 
@@ -81,7 +80,7 @@ virtualenv\Scripts\activate
 
 ### 3. Установка Tesseract OCR в vendor каталог
 
-**Вариант 1: Автоматическая установка (рекомендуется)**
+**Вариант 1: Автоматическая установка**
 
 ```bash
 cd models
@@ -146,7 +145,6 @@ result = classifier.classify_image("screenshot.png", ocr)
 print(f"Категория: {result.category.value}")
 print(f"Подкатегория: {result.subcategory}")
 print(f"Уверенность: {result.confidence:.2%}")
-print(f"Ключевые слова: {result.matched_keywords}")
 ```
 
 ### Настройка ключевых слов (опционально, под свои требования)
