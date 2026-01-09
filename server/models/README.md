@@ -40,7 +40,6 @@ ai-screen-activity-classification/
 │   │   │   └── transformer_classifer.py
 │   │   ├── __init__.py 
 │   │   ├── activity_classifier.py
-│   │   ├── create_test_images.py
 │   │   ├── hybrid_classifier.py
 │   │   ├── install_tesseract.py
 │   │   ├── keyword_lists.py
@@ -81,7 +80,7 @@ virtualenv\Scripts\activate
 
 ### 3. Установка Tesseract OCR в vendor каталог
 
-**Вариант 1: Автоматическая установка (рекомендуется)**
+**Вариант 1: Автоматическая установка**
 
 ```bash
 cd models
@@ -146,7 +145,6 @@ result = classifier.classify_image("screenshot.png", ocr)
 print(f"Категория: {result.category.value}")
 print(f"Подкатегория: {result.subcategory}")
 print(f"Уверенность: {result.confidence:.2%}")
-print(f"Ключевые слова: {result.matched_keywords}")
 ```
 
 ### Настройка ключевых слов (опционально, под свои требования)
