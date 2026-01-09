@@ -43,19 +43,18 @@ class TesseractInstaller:
         print(f"Каталог установки: {self.vendor_dir}")
     
     def install_windows(self) -> bool:
-        print("\n=== Установка Tesseract для Windows ===")
+        print("\nУстановка Tesseract для Windows")
         
         # Создаем каталоги
         windows_dir = self.vendor_dir / 'windows'
         windows_dir.mkdir(parents=True, exist_ok=True)
         
-        print("1. Проверка существующей установки...")
+        print("1. Проверка существующей установки")
         
-        # Проверяем, есть ли уже установленный Tesseract в системе
         system_tesseract = self._find_system_tesseract_windows()
         if system_tesseract:
-            print(f"   Найден системный Tesseract: {system_tesseract}")
-            choice = input("   Использовать системный Tesseract? (y/n): ").lower()
+            print(f"Найден системный Tesseract: {system_tesseract}")
+            choice = input("Использовать системный Tesseract? (y/n): ").lower()
             if choice == 'y':
                 return self._copy_system_tesseract_windows(system_tesseract, windows_dir)
         
@@ -70,7 +69,6 @@ class TesseractInstaller:
         print("   г) Отметьте установку русского и английского языков")
         print("   д) Завершите установку")
         
-        # Проверяем, установлен ли Tesseract
         tesseract_exe = windows_dir / 'tesseract.exe'
         if tesseract_exe.exists():
             print(f"\n✓ Tesseract найден в {tesseract_exe}")
@@ -83,13 +81,11 @@ class TesseractInstaller:
     def install_linux(self) -> bool:
         print("\n=== Установка Tesseract для Linux ===")
         
-        # Создаем каталоги
         linux_dir = self.vendor_dir / 'linux'
         linux_dir.mkdir(parents=True, exist_ok=True)
         
         print("1. Проверка существующего Tesseract...")
         
-        # Проверяем, установлен ли Tesseract в системе
         try:
             result = subprocess.run(['which', 'tesseract'], 
                                    capture_output=True, text=True)
@@ -97,7 +93,6 @@ class TesseractInstaller:
                 system_path = result.stdout.strip()
                 print(f"   Найден системный Tesseract: {system_path}")
                 
-                # Копируем бинарные файлы
                 return self._setup_linux_from_system(linux_dir)
         except Exception as e:
             print(f"   Ошибка при проверке системного Tesseract: {e}")
@@ -105,7 +100,6 @@ class TesseractInstaller:
         print("2. Установка через пакетный менеджер...")
         print("   Определяем менеджер пакетов...")
         
-        # Определяем менеджер пакетов
         package_manager = self._detect_package_manager()
         
         if package_manager == 'apt':
@@ -128,7 +122,6 @@ class TesseractInstaller:
             if os.path.exists(path):
                 return path
         
-        # Проверяем PATH
         try:
             result = subprocess.run(['where', 'tesseract'], 
                                    capture_output=True, text=True, shell=True)
@@ -143,31 +136,25 @@ class TesseractInstaller:
         try:
             print(f"   Копирование из {source_path} в {target_dir}")
             
-            # Создаем целевой каталог
             target_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Определяем корневую директорию Tesseract
+
             source_dir = Path(source_path).parent
-            
-            # Копируем основные файлы
+
             for item in source_dir.iterdir():
                 if item.is_file():
                     shutil.copy2(item, target_dir / item.name)
                     print(f"     Скопирован: {item.name}")
                 elif item.is_dir() and item.name != 'tessdata':
-                    # Копируем поддиректории (кроме tessdata, которую скопируем отдельно)
                     target_subdir = target_dir / item.name
                     shutil.copytree(item, target_subdir, dirs_exist_ok=True)
                     print(f"     Скопирована директория: {item.name}")
-            
-            # Копируем tessdata
+
             tessdata_source = source_dir / 'tessdata'
             tessdata_target = target_dir / 'tessdata'
             if tessdata_source.exists():
                 shutil.copytree(tessdata_source, tessdata_target, dirs_exist_ok=True)
                 print(f"     Скопирована tessdata")
-            
-            # Проверяем успешность
+
             tesseract_exe = target_dir / 'tesseract.exe'
             if tesseract_exe.exists():
                 print(f"\n✓ Tesseract успешно скопирован в {target_dir}")
@@ -181,21 +168,17 @@ class TesseractInstaller:
             return False
     
     def _detect_package_manager(self) -> str:
-        """Определение менеджера пакетов"""
         try:
-            # Проверяем apt (Debian/Ubuntu/Astra Linux)
             result = subprocess.run(['which', 'apt-get'], 
                                    capture_output=True, text=True)
             if result.returncode == 0:
                 return 'apt'
-            
-            # Проверяем yum (RHEL/CentOS)
+
             result = subprocess.run(['which', 'yum'], 
                                    capture_output=True, text=True)
             if result.returncode == 0:
                 return 'yum'
-            
-            # Проверяем dnf (Fedora)
+
             result = subprocess.run(['which', 'dnf'], 
                                    capture_output=True, text=True)
             if result.returncode == 0:
@@ -207,34 +190,29 @@ class TesseractInstaller:
     
     def _setup_linux_from_system(self, target_dir: Path) -> bool:
         try:
-            # Создаем структуру каталогов
             bin_dir = target_dir / 'bin'
             lib_dir = target_dir / 'lib'
             bin_dir.mkdir(parents=True, exist_ok=True)
             lib_dir.mkdir(parents=True, exist_ok=True)
-            
-            # Получаем путь к Tesseract
+
             tesseract_path = subprocess.run(['which', 'tesseract'], 
                                           capture_output=True, text=True).stdout.strip()
             
             if not tesseract_path:
                 print("   Tesseract не найден в системе")
                 return False
-            
-            # Создаем симлинк на бинарник
+
             target_bin = bin_dir / 'tesseract'
             if target_bin.exists() or target_bin.is_symlink():
                 target_bin.unlink()
             
             os.symlink(tesseract_path, target_bin)
             print(f"   Создан симлинк: {target_bin} -> {tesseract_path}")
-            
-            # Получаем библиотеки Tesseract
+
             ldd_result = subprocess.run(['ldd', tesseract_path], 
                                       capture_output=True, text=True)
             
             if ldd_result.returncode == 0:
-                # Анализируем вывод ldd для поиска библиотек Tesseract
                 for line in ldd_result.stdout.split('\n'):
                     if 'libtesseract' in line:
                         parts = line.split()
@@ -249,16 +227,14 @@ class TesseractInstaller:
                                 
                                 os.symlink(lib_path, target_lib)
                                 print(f"   Создан симлинк библиотеки: {target_lib}")
-            
-            # Создаем скрипт-обертку для настройки LD_LIBRARY_PATH
+
             wrapper_script = target_dir / 'run_tesseract.sh'
             with open(wrapper_script, 'w') as f:
                 f.write(f"""#!/bin/bash
 export LD_LIBRARY_PATH="{lib_dir.absolute()}:$LD_LIBRARY_PATH"
 exec "{bin_dir.absolute()}/tesseract" "$@"
 """)
-            
-            # Делаем скрипт исполняемым
+
             wrapper_script.chmod(wrapper_script.stat().st_mode | stat.S_IEXEC)
             
             print(f"   Создан скрипт-обертка: {wrapper_script}")
@@ -273,7 +249,6 @@ exec "{bin_dir.absolute()}/tesseract" "$@"
         print("   Используем apt для установки Tesseract")
         
         try:
-            # Обновляем список пакетов
             print("   Обновление списка пакетов...")
             subprocess.run(['sudo', 'apt-get', 'update'], check=True)
             
@@ -283,7 +258,6 @@ exec "{bin_dir.absolute()}/tesseract" "$@"
             
             subprocess.run(['sudo', 'apt-get', 'install', '-y'] + packages, check=True)
             
-            # После установки настраиваем симлинки
             return self._setup_linux_from_system(target_dir)
             
         except subprocess.CalledProcessError as e:
@@ -302,8 +276,7 @@ exec "{bin_dir.absolute()}/tesseract" "$@"
             print(f"   Установка пакетов: {', '.join(packages)}")
             
             subprocess.run(['sudo', package_manager, 'install', '-y'] + packages, check=True)
-            
-            # После установки настраиваем симлинки
+
             return self._setup_linux_from_system(target_dir)
             
         except subprocess.CalledProcessError as e:
@@ -315,13 +288,11 @@ exec "{bin_dir.absolute()}/tesseract" "$@"
         print("   Эта операция требует установленных компиляторов и зависимостей.")
         
         try:
-            # Создаем временный каталог для сборки
             with tempfile.TemporaryDirectory() as temp_dir:
                 temp_path = Path(temp_dir)
                 
                 print("   1. Установка зависимостей для сборки...")
-                
-                # Устанавливаем зависимости для сборки
+
                 try:
                     if shutil.which('apt-get'):
                         deps = [
@@ -344,21 +315,17 @@ exec "{bin_dir.absolute()}/tesseract" "$@"
                     print("     Предупреждение: не удалось установить зависимости")
                 
                 print("   2. Скачивание и сборка Leptonica...")
-                
-                # Скачиваем и собираем Leptonica (зависимость Tesseract)
+
                 leptonica_url = "https://github.com/DanBloomberg/leptonica/releases/download/1.83.1/leptonica-1.83.1.tar.gz"
                 leptonica_tar = temp_path / "leptonica.tar.gz"
-                
-                # Скачиваем
+
                 urllib.request.urlretrieve(leptonica_url, leptonica_tar)
-                
-                # Распаковываем
+
                 with tarfile.open(leptonica_tar, 'r:gz') as tar:
                     tar.extractall(temp_path)
                 
                 leptonica_dir = temp_path / "leptonica-1.83.1"
-                
-                # Собираем
+
                 subprocess.run([
                     './configure', f'--prefix={target_dir.absolute()}',
                     '--disable-dependency-tracking'
@@ -368,20 +335,17 @@ exec "{bin_dir.absolute()}/tesseract" "$@"
                 subprocess.run(['sudo', 'make', 'install'], cwd=leptonica_dir, capture_output=True)
                 
                 print("   3. Скачивание и сборка Tesseract...")
-                
-                # Скачиваем Tesseract
+
                 tesseract_url = "https://github.com/tesseract-ocr/tesseract/archive/refs/tags/5.3.1.tar.gz"
                 tesseract_tar = temp_path / "tesseract.tar.gz"
                 
                 urllib.request.urlretrieve(tesseract_url, tesseract_tar)
-                
-                # Распаковываем
+
                 with tarfile.open(tesseract_tar, 'r:gz') as tar:
                     tar.extractall(temp_path)
                 
                 tesseract_dir = temp_path / "tesseract-5.3.1"
-                
-                # Собираем
+
                 env = os.environ.copy()
                 env['LIBLEPT_HEADERSDIR'] = str(target_dir.absolute() / 'include')
                 env['PKG_CONFIG_PATH'] = f"{target_dir.absolute()}/lib/pkgconfig"
@@ -400,12 +364,10 @@ exec "{bin_dir.absolute()}/tesseract" "$@"
                 subprocess.run(['sudo', 'make', 'install'], cwd=tesseract_dir, env=env, capture_output=True)
                 
                 print("   4. Установка языковых данных...")
-                
-                # Создаем каталог для языковых данных
+
                 tessdata_dir = target_dir / 'share' / 'tessdata'
                 tessdata_dir.mkdir(parents=True, exist_ok=True)
-                
-                # Скачиваем русский и английский языки
+
                 lang_urls = [
                     "https://github.com/tesseract-ocr/tessdata/raw/main/rus.traineddata",
                     "https://github.com/tesseract-ocr/tessdata/raw/main/eng.traineddata"
@@ -416,8 +378,7 @@ exec "{bin_dir.absolute()}/tesseract" "$@"
                     lang_path = tessdata_dir / lang_file
                     urllib.request.urlretrieve(url, lang_path)
                     print(f"     Установлен язык: {lang_file}")
-                
-                # Создаем скрипт-обертку
+
                 wrapper_script = target_dir / 'run_tesseract.sh'
                 with open(wrapper_script, 'w') as f:
                     f.write(f"""#!/bin/bash
@@ -437,9 +398,8 @@ exec "{target_dir.absolute()}/bin/tesseract" "$@"
             return False
     
     def verify_installation(self) -> bool:
-        print("\n=== Проверка установки ===")
-        
-        # Определяем путь к Tesseract в зависимости от ОС
+        print("\nПроверка установки")
+
         if self.os_name == 'windows':
             tesseract_path = self.vendor_dir / 'windows' / 'tesseract.exe'
         else:
@@ -447,14 +407,12 @@ exec "{target_dir.absolute()}/bin/tesseract" "$@"
         
         if tesseract_path.exists():
             print(f"✓ Tesseract найден: {tesseract_path}")
-            
-            # Проверяем версию
+
             try:
                 if self.os_name == 'windows':
                     result = subprocess.run([str(tesseract_path), '--version'], 
                                           capture_output=True, text=True, shell=True)
                 else:
-                    # Для Linux может потребоваться скрипт-обертка
                     run_script = self.vendor_dir / 'linux' / 'run_tesseract.sh'
                     if run_script.exists():
                         result = subprocess.run([str(run_script), '--version'], 
@@ -475,8 +433,7 @@ exec "{target_dir.absolute()}/bin/tesseract" "$@"
                 return False
         else:
             print(f"✗ Tesseract не найден по пути: {tesseract_path}")
-            
-            # Проверяем системный Tesseract
+
             try:
                 result = subprocess.run(['tesseract', '--version'], 
                                       capture_output=True, text=True)
@@ -490,9 +447,7 @@ exec "{target_dir.absolute()}/bin/tesseract" "$@"
             return False
     
     def install(self) -> bool:
-        print(f"\n{'='*60}")
         print("Установка Tesseract OCR в локальный каталог")
-        print(f"{'='*60}")
         
         # Выполняем установку в зависимости от ОС
         if self.os_name == 'windows':
@@ -505,12 +460,10 @@ exec "{target_dir.absolute()}/bin/tesseract" "$@"
         
         # Проверяем установку
         if success:
-            print(f"\n{'='*60}")
             print("Проверка установки...")
             verified = self.verify_installation()
             
             if verified:
-                print(f"\n{'='*60}")
                 print("✓ Установка Tesseract завершена успешно!")
                 print(f"  Каталог: {self.vendor_dir}")
                 return True
