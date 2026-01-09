@@ -683,32 +683,3 @@ class OCRProcessor:
             result['languages_available'] = []
         
         return result
-
-
-    def quick_test(self):
-        from PIL import Image, ImageDraw, ImageFont
-
-        img = Image.new('RGB', (400, 150), color='white')
-        d = ImageDraw.Draw(img)
-        try:
-            font = ImageFont.truetype("arial.ttf", 24)
-        except:
-            font = ImageFont.load_default()
-            
-        d.text((20, 30), "Hello World", fill='black', font=font)
-        d.text((20, 70), "Test OCR 12345", fill='black', font=font)
-            
-        test_path = "quick_test.png"
-        img.save(test_path)
-
-        result = self._run_tesseract_subprocess(test_path, 'eng')
-
-        if os.path.exists(test_path):
-            os.unlink(test_path)
-
-        return result
-
-ocr = OCRProcessor()
-result = ocr.quick_test()
-print(f"Успех: {result['success']}")
-print(f"Текст: {result['text']}")
