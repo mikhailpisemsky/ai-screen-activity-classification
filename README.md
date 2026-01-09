@@ -106,13 +106,7 @@ python install_tesseract.py
 
 * Или: https://digi.bib.uni-mannheim.de/tesseract/tesseract-ocr-w64-setup-5.3.1.20230401.exe
 
-*2.) Установите в каталог:*
-
-```bash
-server/vendor/tesseract/windows/
-```
-
-*3.) Выберите языки:*
+*2.) Выберите языки:*
 
 * Английский
 
@@ -121,6 +115,12 @@ server/vendor/tesseract/windows/
 1.) На шаге установки Choose Components найдите подраздел Additional language data;
 
 2.) Включите галочки напротив "Russian" и "English"
+
+*3.) Установите в каталог:*
+
+```bash
+server/vendor/tesseract/windows/
+```
 
 **Вариант 3: Ручная установка для Linux**
 
