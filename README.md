@@ -58,7 +58,13 @@ ai-screen-activity-classification/
 
 ```bash
 git clone https://github.com/mikhailpisemsky/ai-screen-activity-classification.git
+```
+
+```bash
 cd ai-screen-activity-classification
+```
+
+```bash
 git lfs fetch --all
 ```
 
@@ -68,6 +74,9 @@ git lfs fetch --all
 
 ```bash
 cd server
+```
+
+```bash
 python -m venv virtualenv
 ```
 
@@ -83,6 +92,9 @@ virtualenv\Scripts\activate
 
 ```bash
 cd models
+```
+
+```bash
 python install_tesseract.py
 ```
 
@@ -111,16 +123,29 @@ server/vendor/tesseract/windows/
 2.) Включите галочки напротив "Russian" и "English"
 
 **Вариант 3: Ручная установка для Linux**
+
 ```bash
 sudo apt-get update
+```
+
+```bash
 sudo apt-get install -y tesseract-ocr tesseract-ocr-rus tesseract-ocr-eng
+```
+
+```bash
 cd server/models
+```
+
+```bash
 python install_tesseract.py --verify-only
 ```
 
 ### 4. Установка зависимостей Python
 ```bash
 cd models
+```
+
+```bash
 pip install -r requirements.txt
 ```
 
