@@ -53,6 +53,42 @@ ai-screen-activity-classification/
 └── README.md
 ```
 
+## Клонирование репозитория 
+
+Репозиторий использует [Git Large File Storage (LFS)](https://git-lfs.com/) для хранения больших файлов. Для стабильного клонирования репозитория и настройки модели можно:
+
+**Вариант 1. Установить Git LFS, если не установлен ранее:**
+
+* Для Windows:
+
+```bash
+winget install -e --id GitHub.GitLFS
+```
+
+```bash
+git lfs install
+```
+
+* Для Linux:
+
+```bash
+sudo apt update
+```
+
+```bash
+sudo apt install git-lfs
+```
+
+```bash
+git lfs install
+```
+
+**Вариант 2. Отдельно копировать файл, хранящийся с использованием Git LFS:**
+
+```bash
+server/models/llm/trained_model/pytorch_model.bin
+```
+
 ## Установка и подготовка модели к использованию
 
 ### 1. Клонирование репозитория *mikhailpisemsky/ai-screen-activity-classification*
@@ -65,8 +101,10 @@ git clone https://github.com/mikhailpisemsky/ai-screen-activity-classification.g
 cd ai-screen-activity-classification
 ```
 
+Клонирование файлов хранящихся с использованием Git LFS. Если отдельно загружали файл server/models/llm/trained_model/pytorch_model.bin, можно пропустить данный шаг.
+
 ```bash
-git lfs fetch --all
+git lfs pull
 ```
 
 ### 2. Создание виртуального окружения
@@ -109,13 +147,14 @@ python install_tesseract.py
 
 *2.) Выберите языки:*
 
-На шаге установки Choose Components найдите подраздел Additional language data. Включите галочки напротив "Russian" и "English".
+На шаге установки Choose Components (Компоненты устанавливаемой программы) найдите подраздел Additional language data. Включите галочки напротив "Russian" и "English".
 
 *3.) Установите в каталог:*
 
 ```bash
 server/vendor/tesseract/windows/
 ```
+
 **Вариант 3: Ручная установка для Linux**
 
 ```bash
@@ -165,7 +204,7 @@ print(f"Подкатегория: {result.subcategory}")
 print(f"Уверенность: {result.confidence:.2%}")
 ```
 
-### Настройка ключевых слов (опционально, под свои требования)
+### Настройка ключевых слов (необязательно, можно настроить под свои требования)
 
 Ключевые слова хранятся в keyword_lists.py. Для редактирования:
 
