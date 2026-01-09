@@ -108,13 +108,7 @@ python install_tesseract.py
 
 *2.) Выберите языки:*
 
-* Английский
-
-* Русский
-
-1.) На шаге установки Choose Components найдите подраздел Additional language data;
-
-2.) Включите галочки напротив "Russian" и "English"
+На шаге установки Choose Components найдите подраздел Additional language data. Включите галочки напротив "Russian" и "English".
 
 *3.) Установите в каталог:*
 
