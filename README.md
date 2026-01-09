@@ -39,7 +39,6 @@ ai-screen-activity-classification/
 │   │   │   └── transformer_classifer.py
 │   │   ├── __init__.py 
 │   │   ├── activity_classifier.py
-│   │   ├── create_test_images.py
 │   │   ├── hybrid_classifier.py
 │   │   ├── install_tesseract.py
 │   │   ├── keyword_lists.py
