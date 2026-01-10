@@ -65,8 +65,8 @@ class TesseractInstaller:
         print("\n3. Инструкция по установке:")
         print("   а) Скачайте установщик tesseract-ocr-w64-setup-*.exe")
         print("   б) Запустите установщик")
-        print("   в) Выберите путь установки: {}".format(windows_dir))
-        print("   г) Отметьте установку русского и английского языков")
+        print("   в) Отметьте установку русского и английского языков. На шаге установки Choose Components (Компоненты устанавливаемой программы) найдите подраздел Additional language data. Включите галочки напротив Russian и English.")
+        print("   г) Выберите путь установки: {}".format(windows_dir))
         print("   д) Завершите установку")
         
         tesseract_exe = windows_dir / 'tesseract.exe'
@@ -79,7 +79,7 @@ class TesseractInstaller:
             return False
     
     def install_linux(self) -> bool:
-        print("\n=== Установка Tesseract для Linux ===")
+        print("\nУстановка Tesseract для Linux")
         
         linux_dir = self.vendor_dir / 'linux'
         linux_dir.mkdir(parents=True, exist_ok=True)
